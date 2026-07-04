@@ -15,7 +15,7 @@ export const DEFAULT_SETTINGS: Settings = {
   oneTimeExpenses: [],
   categoryBudgets: [
     { category: "Besteiras", limit: 300 },
-    { category: "Alimentação", limit: 500 },
+    { category: "Alimentacao", limit: 500 },
     { category: "Transporte", limit: 150 },
     { category: "Lazer", limit: 400 },
   ],

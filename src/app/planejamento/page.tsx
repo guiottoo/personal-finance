@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 
 export default function PlanejamentoPage() {
-  const { projection, settings, currentExpenses, currentSurplus } = useFinancialData();
+  const { projection, settings, currentExpenses, currentSurplus, scenarios } = useFinancialData();
 
   return (
     <div className="space-y-5">
@@ -26,7 +26,7 @@ export default function PlanejamentoPage() {
         ))}
       </div>
 
-      <MonthlyTable projection={projection} goalAmount={settings.goalAmount} />
+      <MonthlyTable projection={projection} goalAmount={settings.goalAmount} scenarios={scenarios} />
     </div>
   );
 }

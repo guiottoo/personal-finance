@@ -27,7 +27,7 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
   { id: "b10", date: "2026-07-03", description: "Esfirra", amount: 7.00, type: "expense", category: "Besteiras", account: "banco-inter" },
 
   // === ALIMENTACAO ===
-  { id: "a1", date: "2026-07-01", description: "Marmita", amount: 38, type: "expense", category: "Alimentação", account: "c6-bank" },
+  { id: "a1", date: "2026-07-01", description: "Marmita", amount: 38, type: "expense", category: "Alimentacao", account: "c6-bank" },
 
   // === TRANSPORTE ===
   { id: "t1", date: "2026-07-01", description: "Uber", amount: 26.79, type: "expense", category: "Transporte", account: "c6-bank" },
@@ -41,7 +41,7 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
 
 export const EXPENSE_CATEGORIES = [
   "Moradia",
-  "Alimentação",
+  "Alimentacao",
   "Transporte",
   "Impostos",
   "Parcelas",
@@ -53,5 +53,22 @@ export const EXPENSE_CATEGORIES = [
   "Saude",
   "Outros",
 ];
+
+export const CATEGORY_LABELS: Record<string, string> = {
+  Moradia: "Moradia",
+  Alimentacao: "Alimentação",
+  Transporte: "Transporte",
+  Impostos: "Impostos",
+  Parcelas: "Parcelas",
+  Besteiras: "Besteiras",
+  Lazer: "Lazer",
+  "Cuidado Pessoal": "Cuidado Pessoal",
+  Dividas: "Dívidas",
+  Emprestimos: "Empréstimos",
+  Saude: "Saúde",
+  Outros: "Outros",
+  Salario: "Salário",
+  Investimento: "Investimento",
+};
 
 export const INCOME_CATEGORIES = ["Salario", "Freelance", "Outros"];

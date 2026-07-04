@@ -3,7 +3,7 @@
 import { Card, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
-import type { MonthlyBudget } from "@/lib/types";
+import type { MonthlyBudget, Scenario } from "@/lib/types";
 import { MONTHS_PT } from "@/lib/constants";
 
 function monthLabel(monthStr: string): string {
@@ -11,7 +11,27 @@ function monthLabel(monthStr: string): string {
   return `${MONTHS_PT[m - 1]} ${year}`;
 }
 
-export function MonthlyTable({ projection, goalAmount }: { projection: MonthlyBudget[]; goalAmount: number }) {
+// Determina a cor da linha baseado em qual cenario atingiria a meta naquele mes
+function getScenarioColor(accumulated: number, scenarios: Scenario[]): string | null {
+  const conservative = scenarios.find((s) => s.name === "conservative");
+  const realistic = scenarios.find((s) => s.name === "realistic");
+  const strong = scenarios.find((s) => s.name === "strong");
+
+  if (strong && accumulated >= 20000) return "bg-[#34C759]/5"; // verde = forte
+  if (realistic && accumulated >= 16000) return "bg-[#007AFF]/5"; // azul = realista
+  if (conservative && accumulated >= 12000) return "bg-[#FF9500]/5"; // laranja = conservador
+  return null;
+}
+
+export function MonthlyTable({
+  projection,
+  goalAmount,
+  scenarios,
+}: {
+  projection: MonthlyBudget[];
+  goalAmount: number;
+  scenarios: Scenario[];
+}) {
   return (
     <Card variant="grouped">
       <div className="p-5 sm:p-6">
@@ -19,13 +39,27 @@ export function MonthlyTable({ projection, goalAmount }: { projection: MonthlyBu
         <p className="mt-1 text-[13px] text-[#8E8E93]">
           Já descontando besteiras, alimentação, transporte e lazer
         </p>
+        <div className="mt-3 flex flex-wrap gap-3 text-[11px]">
+          <div className="flex items-center gap-1.5">
+            <div className="h-2.5 w-2.5 rounded-full bg-[#FF9500]" />
+            <span className="text-[#8E8E93]">Conservador</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="h-2.5 w-2.5 rounded-full bg-[#007AFF]" />
+            <span className="text-[#8E8E93]">Realista</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="h-2.5 w-2.5 rounded-full bg-[#34C759]" />
+            <span className="text-[#8E8E93]">Forte</span>
+          </div>
+        </div>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[600px]">
           <thead>
             <tr className="border-t border-[rgba(60,60,67,0.12)] dark:border-[rgba(84,84,88,0.36)]">
-              {["Mes", "Receita", "Fixas", "Variaveis", "Aporte", "Folga", "Acumulado"].map((col) => (
-                <th key={col} className={`px-5 py-2.5 text-[11px] font-semibold uppercase tracking-wider ${col === "Mes" ? "text-left" : "text-right"} ${col === "Aporte" ? "text-[#007AFF]" : "text-[#8E8E93]"}`}>
+              {["Mês", "Receita", "Fixas", "Variáveis", "Aporte", "Folga", "Acumulado"].map((col) => (
+                <th key={col} className={`px-5 py-2.5 text-[11px] font-semibold uppercase tracking-wider ${col === "Mês" ? "text-left" : "text-right"} ${col === "Aporte" ? "text-[#007AFF]" : "text-[#8E8E93]"}`}>
                   {col}
                 </th>
               ))}
@@ -34,8 +68,16 @@ export function MonthlyTable({ projection, goalAmount }: { projection: MonthlyBu
           <tbody>
             {projection.map((row, i) => {
               const isGoalReached = row.accumulated >= goalAmount && (i === 0 || projection[i - 1].accumulated < goalAmount);
+              const pct = row.accumulated / goalAmount;
+              // Color based on progress toward goal
+              let rowColor = "";
+              if (pct >= 1) rowColor = "bg-[#34C759]/8";
+              else if (pct >= 0.8) rowColor = "bg-[#34C759]/4";
+              else if (pct >= 0.6) rowColor = "bg-[#007AFF]/4";
+              else if (pct >= 0.4) rowColor = "bg-[#FF9500]/4";
+
               return (
-                <tr key={row.month} className="border-t border-[rgba(60,60,67,0.08)] dark:border-[rgba(84,84,88,0.18)]">
+                <tr key={row.month} className={`border-t border-[rgba(60,60,67,0.08)] dark:border-[rgba(84,84,88,0.18)] ${rowColor} ${i === 0 ? "!bg-[#007AFF]/8" : ""}`}>
                   <td className="px-5 py-3 text-[15px] font-medium text-[#000] dark:text-white">
                     <div className="flex items-center gap-2">
                       {monthLabel(row.month)}

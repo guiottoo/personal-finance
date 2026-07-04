@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardTitle } from "@/components/ui/card";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, categoryLabel } from "@/lib/utils";
 import type { CategoryBudget } from "@/lib/types";
 
 export function BudgetTracker({ budgets }: { budgets: CategoryBudget[] }) {
@@ -25,7 +25,7 @@ export function BudgetTracker({ budgets }: { budgets: CategoryBudget[] }) {
             <div key={b.category}>
               <div className="flex items-end justify-between mb-1.5">
                 <p className="text-[15px] font-medium text-[#000] dark:text-white">
-                  {b.category}
+                  {categoryLabel(b.category)}
                 </p>
                 <p className="text-[13px] text-[#8E8E93]">
                   {formatCurrency(b.spent)}

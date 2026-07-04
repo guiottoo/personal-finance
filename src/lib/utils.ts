@@ -26,3 +26,14 @@ export function formatMonth(date: Date): string {
 export function formatDate(date: Date): string {
   return new Intl.DateTimeFormat("pt-BR").format(date);
 }
+
+export function categoryLabel(key: string): string {
+  const labels: Record<string, string> = {
+    Alimentacao: "Alimentação",
+    Dividas: "Dívidas",
+    Emprestimos: "Empréstimos",
+    Saude: "Saúde",
+    Salario: "Salário",
+  };
+  return labels[key] || key;
+}

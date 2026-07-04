@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useFinancialData } from "@/hooks/use-financial-data";
 import { Card, CardTitle } from "@/components/ui/card";
 import { MonthSelector } from "@/components/ui/month-selector";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, categoryLabel } from "@/lib/utils";
 import type { Transaction, CategoryBudget } from "@/lib/types";
 import { ChevronLeft, ChevronRight, CheckCircle, AlertTriangle } from "lucide-react";
 
@@ -23,7 +23,7 @@ function CategoryCard({ budget, transactions }: { budget: CategoryBudget; transa
     <Card variant="grouped">
       <div className="p-5 sm:p-6">
         <div className="flex items-center justify-between mb-1">
-          <p className="text-[17px] font-semibold text-[#000] dark:text-white">{budget.category}</p>
+          <p className="text-[17px] font-semibold text-[#000] dark:text-white">{categoryLabel(budget.category)}</p>
           <p className="text-[15px] text-[#8E8E93]">
             <span className={isOver ? "text-[#FF3B30] font-semibold" : "font-semibold text-[#000] dark:text-white"}>{formatCurrency(budget.spent)}</span>
             <span className="text-[#C7C7CC]"> / {formatCurrency(budget.limit)}</span>
