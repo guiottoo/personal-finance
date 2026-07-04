@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# napista
 
-## Getting Started
+Dashboard financeiro pessoal para controle de orcamento mensal e meta de compra de carro.
 
-First, run the development server:
+## Stack
+
+- Next.js 16 + TypeScript
+- Tailwind CSS 4
+- Recharts (graficos)
+- Lucide React (icones)
+- Supabase (backend opcional)
+
+## Setup
 
 ```bash
+cd napista
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Acesse `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+O app funciona com dados mockados por padrao. Nao precisa de Supabase para rodar localmente.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Supabase (opcional)
 
-## Learn More
+1. Crie um projeto em [supabase.com](https://supabase.com)
+2. Copie `.env.local.example` para `.env.local` e preencha as credenciais
+3. Execute `supabase/schema.sql` no SQL Editor
+4. Execute `supabase/policies.sql` para RLS
+5. Crie um usuario via Auth, substitua `YOUR_USER_ID` em `supabase/seed.sql` e execute
 
-To learn more about Next.js, take a look at the following resources:
+## Estrutura
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+  app/                    # Paginas (App Router)
+    page.tsx              # Dashboard principal
+    planejamento/         # Tabela mensal
+    meta-carro/           # Meta + cenarios + plano de aportes
+    contas/               # C6, Inter, C6 Invest
+    lancamentos/          # Formulario + lista de transacoes
+    configuracoes/        # Editar valores e regras
+  components/
+    ui/                   # Componentes base (Card, Button, Input...)
+    layout/               # Sidebar, Header, AppShell
+    dashboard/            # KPIs, graficos, alertas
+    planning/             # Tabela mensal
+    goal/                 # Cenarios, plano de aportes
+    accounts/             # Cards de contas
+    transactions/         # Form e lista
+    settings/             # Formulario de config
+  hooks/                  # useTheme, useFinancialData
+  lib/                    # Utils, tipos, calculos, constantes, mock
+supabase/
+  schema.sql              # Tabelas
+  policies.sql            # RLS
+  seed.sql                # Dados iniciais
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Dados financeiros
 
-## Deploy on Vercel
+- Receita util: R$ 5.661,20/mes
+- Despesas fixas: R$ 1.690 (aluguel + agua/luz + mercado + CNPJ)
+- Parcela celular: R$ 300 (ate out/2026)
+- Besteiras: R$ 300/mes (Banco Inter)
+- Meta: R$ 20.000 (Chevrolet Classic)
+- Ja investido: R$ 800
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Dark mode
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Toggle no header. O modo padrao e claro.

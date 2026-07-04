@@ -1,26 +1,76 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+    system-ui, "Helvetica Neue", sans-serif;
+  --font-mono: "SF Mono", "Fira Code", monospace;
+
+  /* Apple System Colors */
+  --color-apple-blue: #007AFF;
+  --color-apple-green: #34C759;
+  --color-apple-red: #FF3B30;
+  --color-apple-orange: #FF9500;
+  --color-apple-yellow: #FFCC00;
+  --color-apple-teal: #5AC8FA;
+  --color-apple-purple: #AF52DE;
+  --color-apple-pink: #FF2D55;
+
+  /* Apple Background Colors */
+  --color-apple-bg: #F2F2F7;
+  --color-apple-card: #FFFFFF;
+  --color-apple-elevated: #FFFFFF;
+  --color-apple-separator: rgba(60, 60, 67, 0.12);
+
+  /* Apple Label Colors */
+  --color-apple-label: #000000;
+  --color-apple-label2: #3C3C43;
+  --color-apple-label3: #8E8E93;
+  --color-apple-label4: #C7C7CC;
+
+  /* Dark mode colors as custom properties */
+  --color-apple-dark-bg: #000000;
+  --color-apple-dark-card: #1C1C1E;
+  --color-apple-dark-elevated: #2C2C2E;
+  --color-apple-dark-separator: rgba(84, 84, 88, 0.36);
+  --color-apple-dark-label: #FFFFFF;
+  --color-apple-dark-label2: #EBEBF5;
+  --color-apple-dark-label3: #8E8E93;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "kern";
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-apple-bg);
+  color: var(--color-apple-label);
+  font-family: var(--font-sans);
+  letter-spacing: -0.01em;
+}
+
+.dark body {
+  background-color: var(--color-apple-dark-bg);
+  color: var(--color-apple-dark-label);
+}
+
+::selection {
+  background: rgba(0, 122, 255, 0.2);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.15);
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
 }
