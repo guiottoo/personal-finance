@@ -12,6 +12,7 @@ export default function DashboardPage() {
     settings, currentExpenses, currentContribution, currentSurplus,
     goalAmount, currentAccumulated, goalProgress, projection,
     categoryBudgets, selectedMonth, setSelectedMonth, availableMonths,
+    actualIncome,
   } = useFinancialData();
 
   return (
@@ -23,7 +24,7 @@ export default function DashboardPage() {
 
       <KPICards
         data={{
-          income: settings.monthlyIncome,
+          income: actualIncome > 0 ? actualIncome : settings.monthlyIncome,
           fixedExpenses: currentExpenses.fixed + currentExpenses.phone,
           contribution: currentContribution,
           freeBalance: currentSurplus - currentContribution,
