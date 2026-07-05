@@ -18,7 +18,7 @@ function parseMarkdown(text: string): React.ReactNode[] {
 
 function playDropSound() {
   try {
-    const audio = new Audio("/drop.wav");
+    const audio = new Audio("/notification.mp3");
     audio.volume = 1.0;
     audio.play().catch(() => {});
   } catch {}

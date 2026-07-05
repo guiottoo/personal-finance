@@ -21,12 +21,34 @@ function inferAccount(category: string, type: string): string {
   return "c6-bank";
 }
 
+function loadSavedBudgets(): { category: string; limit: number }[] | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const saved = localStorage.getItem("category-budgets");
+    return saved ? JSON.parse(saved) : null;
+  } catch { return null; }
+}
+
+function saveBudgets(budgets: { category: string; limit: number }[]) {
+  localStorage.setItem("category-budgets", JSON.stringify(budgets));
+}
+
 export function useFinancialData() {
-  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+  const [settings, setSettingsRaw] = useState<Settings>(DEFAULT_SETTINGS);
   const [transactions, setTransactions] = useState<Transaction[]>(MOCK_TRANSACTIONS);
   const [selectedMonth, setSelectedMonth] = useState("2026-07");
 
+  const setSettings = useCallback((s: Settings) => {
+    setSettingsRaw(s);
+    saveBudgets(s.categoryBudgets);
+  }, []);
+
   useEffect(() => {
+    const savedBudgets = loadSavedBudgets();
+    if (savedBudgets) {
+      setSettingsRaw((prev) => ({ ...prev, categoryBudgets: savedBudgets }));
+    }
+
     if (!isSupabaseConfigured || !supabase) return;
 
     async function loadData() {
@@ -58,7 +80,8 @@ export function useFinancialData() {
           .single();
 
         if (settingsData) {
-          setSettings({
+          const saved = loadSavedBudgets();
+          setSettingsRaw({
             monthlyIncome: Number(settingsData.monthly_income),
             incomeInstallments: DEFAULT_SETTINGS.incomeInstallments,
             goalAmount: Number(settingsData.goal_amount),
@@ -67,7 +90,7 @@ export function useFinancialData() {
             phoneInstallmentAmount: Number(settingsData.phone_installment_amount),
             phoneInstallmentEndsAt: settingsData.phone_installment_ends_at,
             oneTimeExpenses: settingsData.one_time_expenses || [],
-            categoryBudgets: DEFAULT_SETTINGS.categoryBudgets,
+            categoryBudgets: saved || DEFAULT_SETTINGS.categoryBudgets,
           });
         }
       } catch (err) {
