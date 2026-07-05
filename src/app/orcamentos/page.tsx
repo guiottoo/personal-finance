@@ -6,12 +6,14 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { MonthSelector } from "@/components/ui/month-selector";
 import { formatCurrency, categoryLabel } from "@/lib/utils";
 import type { Transaction, CategoryBudget } from "@/lib/types";
-import { ChevronLeft, ChevronRight, CheckCircle, AlertTriangle } from "lucide-react";
+import { ChevronLeft, ChevronRight, CheckCircle, AlertTriangle, Pencil, Check, Plus, Trash2 } from "lucide-react";
 
 const PAGE_SIZE = 8;
 
-function CategoryCard({ budget, transactions }: { budget: CategoryBudget; transactions: Transaction[] }) {
+function CategoryCard({ budget, transactions, onEditLimit }: { budget: CategoryBudget; transactions: Transaction[]; onEditLimit: (newLimit: number) => void }) {
   const [page, setPage] = useState(0);
+  const [editing, setEditing] = useState(false);
+  const [editValue, setEditValue] = useState(String(budget.limit));
   const pct = Math.min(budget.spent / budget.limit, 1);
   const isOver = budget.spent > budget.limit;
   const isWarn = pct >= 0.8 && !isOver;
@@ -19,15 +21,32 @@ function CategoryCard({ budget, transactions }: { budget: CategoryBudget; transa
   const totalPages = Math.ceil(transactions.length / PAGE_SIZE);
   const paginated = transactions.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
+  const saveEdit = () => {
+    const val = parseFloat(editValue);
+    if (val > 0) onEditLimit(val);
+    setEditing(false);
+  };
+
   return (
     <Card variant="grouped">
       <div className="p-5 sm:p-6">
         <div className="flex items-center justify-between mb-1">
-          <p className="text-[17px] font-semibold text-[#000] dark:text-white">{categoryLabel(budget.category)}</p>
-          <p className="text-[15px] text-[#8E8E93]">
-            <span className={isOver ? "text-[#FF3B30] font-semibold" : "font-semibold text-[#000] dark:text-white"}>{formatCurrency(budget.spent)}</span>
-            <span className="text-[#C7C7CC]"> / {formatCurrency(budget.limit)}</span>
-          </p>
+          <div className="flex items-center gap-2">
+            <p className="text-[17px] font-semibold text-[#000] dark:text-white">{categoryLabel(budget.category)}</p>
+            <button onClick={() => { setEditing(!editing); setEditValue(String(budget.limit)); }} className="p-1 text-[#007AFF]"><Pencil size={14} /></button>
+          </div>
+          {editing ? (
+            <div className="flex items-center gap-1">
+              <span className="text-[13px] text-[#8E8E93]">R$</span>
+              <input value={editValue} onChange={(e) => setEditValue(e.target.value)} type="number" className="w-20 rounded-lg bg-[#F2F2F7] px-2 py-1 text-right text-[15px] font-semibold text-[#000] outline-none dark:bg-[#2C2C2E] dark:text-white" autoFocus />
+              <button onClick={saveEdit} className="p-1 text-[#34C759]"><Check size={16} /></button>
+            </div>
+          ) : (
+            <p className="text-[15px] text-[#8E8E93]">
+              <span className={isOver ? "text-[#FF3B30] font-semibold" : "font-semibold text-[#000] dark:text-white"}>{formatCurrency(budget.spent)}</span>
+              <span className="text-[#C7C7CC]"> / {formatCurrency(budget.limit)}</span>
+            </p>
+          )}
         </div>
         <div className="h-2 w-full rounded-full bg-[#F2F2F7] dark:bg-[#2C2C2E] mb-1">
           <div className={`h-2 rounded-full transition-all duration-500 ${barColor}`} style={{ width: `${pct * 100}%` }} />
@@ -68,7 +87,9 @@ function CategoryCard({ budget, transactions }: { budget: CategoryBudget; transa
 }
 
 export default function OrcamentosPage() {
-  const { categoryBudgets, settings, monthTransactions, selectedMonth, setSelectedMonth, availableMonths, currentExpenses, actualIncome } = useFinancialData();
+  const { categoryBudgets, settings, setSettings, monthTransactions, selectedMonth, setSelectedMonth, availableMonths, currentExpenses, actualIncome } = useFinancialData();
+  const [newCat, setNewCat] = useState("");
+  const [newLimit, setNewLimit] = useState("");
   const totalBudgeted = settings.categoryBudgets.reduce((s, b) => s + b.limit, 0);
   const totalSpent = categoryBudgets.reduce((s, b) => s + b.spent, 0);
   const totalRemaining = totalBudgeted - totalSpent;
@@ -156,8 +177,47 @@ export default function OrcamentosPage() {
       </Card>
 
       {categoryBudgets.map((b) => (
-        <CategoryCard key={b.category} budget={b} transactions={monthTransactions.filter((t) => t.type === "expense" && t.category === b.category)} />
+        <CategoryCard
+          key={b.category}
+          budget={b}
+          transactions={monthTransactions.filter((t) => t.type === "expense" && t.category === b.category)}
+          onEditLimit={(newLimit) => {
+            const updated = settings.categoryBudgets.map((cb) =>
+              cb.category === b.category ? { ...cb, limit: newLimit } : cb
+            );
+            setSettings({ ...settings, categoryBudgets: updated });
+          }}
+        />
       ))}
+
+      <Card>
+        <div className="flex items-center gap-2">
+          <input
+            value={newCat}
+            onChange={(e) => setNewCat(e.target.value)}
+            placeholder="Nova categoria"
+            className="flex-1 rounded-[10px] bg-[#F2F2F7] px-3.5 py-2.5 text-[15px] text-[#000] outline-none placeholder:text-[#C7C7CC] dark:bg-[#2C2C2E] dark:text-white"
+          />
+          <input
+            value={newLimit}
+            onChange={(e) => setNewLimit(e.target.value)}
+            placeholder="Limite"
+            type="number"
+            className="w-24 rounded-[10px] bg-[#F2F2F7] px-3.5 py-2.5 text-[15px] text-[#000] outline-none placeholder:text-[#C7C7CC] dark:bg-[#2C2C2E] dark:text-white"
+          />
+          <button
+            onClick={() => {
+              if (!newCat.trim() || !newLimit) return;
+              setSettings({ ...settings, categoryBudgets: [...settings.categoryBudgets, { category: newCat.trim(), limit: parseFloat(newLimit) }] });
+              setNewCat("");
+              setNewLimit("");
+            }}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#007AFF] text-white"
+          >
+            <Plus size={18} />
+          </button>
+        </div>
+      </Card>
     </div>
   );
 }
