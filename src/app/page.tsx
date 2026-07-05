@@ -27,7 +27,7 @@ export default function DashboardPage() {
           income: actualIncome > 0 ? actualIncome : settings.monthlyIncome,
           fixedExpenses: currentExpenses.fixed + currentExpenses.phone,
           contribution: currentContribution,
-          freeBalance: currentSurplus - currentContribution,
+          freeBalance: (actualIncome > 0 ? actualIncome : settings.monthlyIncome) - currentExpenses.total - currentContribution,
           goalProgress, goalAmount,
           accumulated: currentAccumulated,
         }}

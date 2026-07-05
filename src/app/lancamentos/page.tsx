@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 
 export default function LancamentosPage() {
-  const { monthTransactions, addTransaction, removeTransaction, actualIncome, actualExpenses, currentContribution, selectedMonth, setSelectedMonth, availableMonths } = useFinancialData();
+  const { monthTransactions, addTransaction, removeTransaction, actualIncome, actualExpenses, currentContribution, selectedMonth, setSelectedMonth, availableMonths, settings } = useFinancialData();
 
   return (
     <div className="space-y-5">
@@ -30,7 +30,7 @@ export default function LancamentosPage() {
         ))}
       </div>
 
-      <TransactionForm onAdd={addTransaction} />
+      <TransactionForm onAdd={addTransaction} budgetCategories={settings.categoryBudgets.map((b) => b.category)} />
       <TransactionList transactions={monthTransactions} onRemove={removeTransaction} />
     </div>
   );

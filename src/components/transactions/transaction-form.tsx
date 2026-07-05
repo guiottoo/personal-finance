@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input, Select } from "@/components/ui/input";
 import { Card, CardTitle } from "@/components/ui/card";
 import type { Transaction } from "@/lib/types";
-import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "@/lib/mock-data";
+import { INCOME_CATEGORIES } from "@/lib/mock-data";
 import { DEFAULT_ACCOUNTS } from "@/lib/constants";
 import { Plus } from "lucide-react";
 
-export function TransactionForm({ onAdd }: { onAdd: (t: Omit<Transaction, "id">) => void }) {
+export function TransactionForm({ onAdd, budgetCategories }: { onAdd: (t: Omit<Transaction, "id">) => void; budgetCategories?: string[] }) {
   const [type, setType] = useState<"income" | "expense" | "contribution">("expense");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
@@ -18,7 +18,7 @@ export function TransactionForm({ onAdd }: { onAdd: (t: Omit<Transaction, "id">)
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [notes, setNotes] = useState("");
 
-  const categories = type === "income" ? INCOME_CATEGORIES : type === "contribution" ? ["Investimento"] : EXPENSE_CATEGORIES;
+  const categories = type === "income" ? INCOME_CATEGORIES : type === "contribution" ? ["Investimento"] : (budgetCategories || []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

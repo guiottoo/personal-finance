@@ -6,7 +6,9 @@ import { Card } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 
 export default function PlanejamentoPage() {
-  const { projection, settings, currentExpenses, currentSurplus, scenarios } = useFinancialData();
+  const { projection, settings, currentExpenses, currentSurplus, scenarios, actualIncome } = useFinancialData();
+  const receitaMes = actualIncome > 0 ? actualIncome : settings.monthlyIncome;
+  const sobraReal = receitaMes - currentExpenses.total;
 
   return (
     <div className="space-y-5">
@@ -14,8 +16,8 @@ export default function PlanejamentoPage() {
 
       <div className="grid gap-3 sm:grid-cols-3">
         {[
-          { label: "Sobra Atual", value: currentSurplus, sub: "Com celular", color: "text-[#000] dark:text-white" },
-          { label: "Sobra Futura", value: currentSurplus + settings.phoneInstallmentAmount, sub: "Sem celular", color: "text-[#34C759]" },
+          { label: "Sobra Atual", value: sobraReal, sub: "Com celular", color: "text-[#000] dark:text-white" },
+          { label: "Sobra Futura", value: sobraReal + settings.phoneInstallmentAmount, sub: "Sem celular", color: "text-[#34C759]" },
           { label: "Total Despesas", value: currentExpenses.total, sub: "Fixas + variaveis", color: "text-[#FF3B30]" },
         ].map((kpi) => (
           <Card key={kpi.label}>
