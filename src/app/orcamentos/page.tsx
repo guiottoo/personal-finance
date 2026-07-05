@@ -155,6 +155,35 @@ export default function OrcamentosPage() {
         </div>
       </Card>
 
+      <Card>
+        <div className="flex items-center gap-2">
+          <input
+            value={newCat}
+            onChange={(e) => setNewCat(e.target.value)}
+            placeholder="Nova categoria"
+            className="flex-1 rounded-[10px] bg-[#F2F2F7] px-3.5 py-2.5 text-[15px] text-[#000] outline-none placeholder:text-[#C7C7CC] dark:bg-[#2C2C2E] dark:text-white"
+          />
+          <input
+            value={newLimit}
+            onChange={(e) => setNewLimit(e.target.value)}
+            placeholder="Limite"
+            type="number"
+            className="w-24 rounded-[10px] bg-[#F2F2F7] px-3.5 py-2.5 text-[15px] text-[#000] outline-none placeholder:text-[#C7C7CC] dark:bg-[#2C2C2E] dark:text-white"
+          />
+          <button
+            onClick={() => {
+              if (!newCat.trim() || !newLimit) return;
+              setSettings({ ...settings, categoryBudgets: [...settings.categoryBudgets, { category: newCat.trim(), limit: parseFloat(newLimit) }] });
+              setNewCat("");
+              setNewLimit("");
+            }}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#007AFF] text-white"
+          >
+            <Plus size={18} />
+          </button>
+        </div>
+      </Card>
+
       <Card variant="grouped">
         <div className="p-5 sm:p-6"><CardTitle>Despesas Fixas</CardTitle></div>
         <div className="divide-y divide-[rgba(60,60,67,0.08)] dark:divide-[rgba(84,84,88,0.18)]">
@@ -189,35 +218,6 @@ export default function OrcamentosPage() {
           }}
         />
       ))}
-
-      <Card>
-        <div className="flex items-center gap-2">
-          <input
-            value={newCat}
-            onChange={(e) => setNewCat(e.target.value)}
-            placeholder="Nova categoria"
-            className="flex-1 rounded-[10px] bg-[#F2F2F7] px-3.5 py-2.5 text-[15px] text-[#000] outline-none placeholder:text-[#C7C7CC] dark:bg-[#2C2C2E] dark:text-white"
-          />
-          <input
-            value={newLimit}
-            onChange={(e) => setNewLimit(e.target.value)}
-            placeholder="Limite"
-            type="number"
-            className="w-24 rounded-[10px] bg-[#F2F2F7] px-3.5 py-2.5 text-[15px] text-[#000] outline-none placeholder:text-[#C7C7CC] dark:bg-[#2C2C2E] dark:text-white"
-          />
-          <button
-            onClick={() => {
-              if (!newCat.trim() || !newLimit) return;
-              setSettings({ ...settings, categoryBudgets: [...settings.categoryBudgets, { category: newCat.trim(), limit: parseFloat(newLimit) }] });
-              setNewCat("");
-              setNewLimit("");
-            }}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#007AFF] text-white"
-          >
-            <Plus size={18} />
-          </button>
-        </div>
-      </Card>
     </div>
   );
 }
