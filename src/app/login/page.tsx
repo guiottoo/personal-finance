@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Lock } from "lucide-react";
 
 export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
+  const [shake, setShake] = useState(false);
   const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -15,46 +17,57 @@ export default function LoginPage() {
       router.push("/");
     } else {
       setError(true);
-      setTimeout(() => setError(false), 2000);
+      setShake(true);
+      setTimeout(() => { setError(false); setShake(false); }, 600);
     }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#F2F2F7] dark:bg-[#000] px-4">
-      <form onSubmit={handleSubmit} className="w-full max-w-[320px]">
-        <div className="text-center mb-8">
-          <h1 className="text-[28px] font-bold text-[#000] dark:text-white">
+      <form onSubmit={handleSubmit} className={`w-full max-w-[280px] ${shake ? "animate-[shake_0.4s_ease-in-out]" : ""}`}>
+        <div className="flex flex-col items-center mb-8">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-b from-[#5AC8FA] to-[#007AFF] mb-4">
+            <Lock size={28} className="text-white" />
+          </div>
+          <h1 className="text-[22px] font-semibold text-[#000] dark:text-white">
             Finance
           </h1>
-          <p className="text-[15px] text-[#8E8E93] mt-1">
-            Digite a senha para acessar
-          </p>
         </div>
 
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Senha"
-          autoFocus
-          className={`w-full rounded-xl bg-white px-4 py-3 text-[17px] text-[#000] outline-none placeholder:text-[#C7C7CC] dark:bg-[#1C1C1E] dark:text-white ${
-            error ? "ring-2 ring-[#FF3B30]" : "focus:ring-2 focus:ring-[#007AFF]"
-          }`}
-        />
+        <div className="space-y-3">
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Senha"
+            autoFocus
+            className={`w-full rounded-2xl bg-white/80 backdrop-blur-sm px-4 py-3.5 text-center text-[17px] text-[#000] outline-none placeholder:text-[#C7C7CC] dark:bg-[#1C1C1E]/80 dark:text-white ${
+              error ? "ring-2 ring-[#FF3B30]" : "focus:ring-2 focus:ring-[#007AFF]/40"
+            }`}
+          />
+
+          <button
+            type="submit"
+            className="w-full rounded-2xl bg-[#007AFF] py-3.5 text-[17px] font-semibold text-white active:opacity-80 transition-opacity"
+          >
+            Desbloquear
+          </button>
+        </div>
 
         {error && (
-          <p className="mt-2 text-[13px] text-[#FF3B30] text-center">
+          <p className="mt-3 text-[13px] text-[#FF3B30] text-center">
             Senha incorreta
           </p>
         )}
-
-        <button
-          type="submit"
-          className="mt-4 w-full rounded-xl bg-[#007AFF] py-3 text-[17px] font-semibold text-white active:bg-[#0056CC]"
-        >
-          Entrar
-        </button>
       </form>
+
+      <style jsx>{`
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          20%, 60% { transform: translateX(-8px); }
+          40%, 80% { transform: translateX(8px); }
+        }
+      `}</style>
     </div>
   );
 }

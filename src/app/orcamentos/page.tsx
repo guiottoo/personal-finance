@@ -68,13 +68,14 @@ function CategoryCard({ budget, transactions }: { budget: CategoryBudget; transa
 }
 
 export default function OrcamentosPage() {
-  const { categoryBudgets, settings, monthTransactions, selectedMonth, setSelectedMonth, availableMonths, currentExpenses } = useFinancialData();
+  const { categoryBudgets, settings, monthTransactions, selectedMonth, setSelectedMonth, availableMonths, currentExpenses, actualIncome } = useFinancialData();
   const totalBudgeted = settings.categoryBudgets.reduce((s, b) => s + b.limit, 0);
   const totalSpent = categoryBudgets.reduce((s, b) => s + b.spent, 0);
   const totalRemaining = totalBudgeted - totalSpent;
   const fixedTotal = currentExpenses.fixed + currentExpenses.phone;
   const worstCase = fixedTotal + totalBudgeted;
-  const sobraMinima = settings.monthlyIncome - worstCase;
+  const receitaMes = actualIncome > 0 ? actualIncome : settings.monthlyIncome;
+  const sobraMinima = receitaMes - worstCase;
   const aporteViavel = sobraMinima > 0;
 
   return (
@@ -103,25 +104,32 @@ export default function OrcamentosPage() {
       </div>
 
       <Card>
-        <div className="flex items-start gap-3">
-          {aporteViavel ? <CheckCircle size={20} className="text-[#34C759] shrink-0 mt-0.5" /> : <AlertTriangle size={20} className="text-[#FF3B30] shrink-0 mt-0.5" />}
-          <div>
-            <p className="text-[15px] font-semibold text-[#000] dark:text-white">
-              {aporteViavel ? "Aporte viável mesmo estourando tudo" : "Aporte comprometido"}
-            </p>
-            <p className="text-[13px] text-[#8E8E93] mt-1 leading-relaxed">
-              Se pagar todas as fixas ({formatCurrency(fixedTotal)}) e usar 100% dos orçamentos ({formatCurrency(totalBudgeted)}), ainda sobram{" "}
-              <span className={`font-semibold ${aporteViavel ? "text-[#34C759]" : "text-[#FF3B30]"}`}>{formatCurrency(sobraMinima)}</span> para aporte.
-            </p>
-            <div className="mt-3 space-y-1 text-[13px]">
-              <div className="flex justify-between"><span className="text-[#8E8E93]">Receita</span><span className="font-semibold text-[#000] dark:text-white">{formatCurrency(settings.monthlyIncome)}</span></div>
-              <div className="flex justify-between"><span className="text-[#8E8E93]">Fixas + celular</span><span className="text-[#FF3B30]">-{formatCurrency(fixedTotal)}</span></div>
-              <div className="flex justify-between"><span className="text-[#8E8E93]">Orçamentos (limite máximo)</span><span className="text-[#FF9500]">-{formatCurrency(totalBudgeted)}</span></div>
-              <div className="flex justify-between border-t border-[rgba(60,60,67,0.08)] pt-1 dark:border-[rgba(84,84,88,0.18)]">
-                <span className="font-semibold text-[#000] dark:text-white">Sobra mínima para aporte</span>
-                <span className={`font-bold ${aporteViavel ? "text-[#34C759]" : "text-[#FF3B30]"}`}>{formatCurrency(sobraMinima)}</span>
-              </div>
-            </div>
+        <div className="flex items-center gap-2 mb-3">
+          {aporteViavel ? <CheckCircle size={18} className="text-[#34C759] shrink-0" /> : <AlertTriangle size={18} className="text-[#FF3B30] shrink-0" />}
+          <p className="text-[15px] font-semibold text-[#000] dark:text-white">
+            {aporteViavel ? "Aporte viável mesmo estourando tudo" : "Aporte comprometido"}
+          </p>
+        </div>
+        <p className="text-[13px] text-[#8E8E93] leading-relaxed mb-3">
+          Se pagar todas as fixas e usar 100% dos orçamentos, ainda sobram{" "}
+          <span className={`font-semibold ${aporteViavel ? "text-[#34C759]" : "text-[#FF3B30]"}`}>{formatCurrency(sobraMinima)}</span> para aporte.
+        </p>
+        <div className="space-y-2 text-[13px]">
+          <div className="flex justify-between">
+            <span className="text-[#8E8E93]">Receita do mês</span>
+            <span className="font-semibold text-[#000] dark:text-white">{formatCurrency(receitaMes)}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-[#8E8E93]">Fixas + celular</span>
+            <span className="text-[#FF3B30]">-{formatCurrency(fixedTotal)}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-[#8E8E93]">Orçamentos (máx)</span>
+            <span className="text-[#FF9500]">-{formatCurrency(totalBudgeted)}</span>
+          </div>
+          <div className="flex justify-between border-t border-[rgba(60,60,67,0.08)] pt-2 dark:border-[rgba(84,84,88,0.18)]">
+            <span className="font-semibold text-[#000] dark:text-white">Sobra p/ aporte</span>
+            <span className={`font-bold ${aporteViavel ? "text-[#34C759]" : "text-[#FF3B30]"}`}>{formatCurrency(sobraMinima)}</span>
           </div>
         </div>
       </Card>
