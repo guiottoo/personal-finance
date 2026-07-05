@@ -19,7 +19,7 @@ function parseMarkdown(text: string): React.ReactNode[] {
 function playDropSound() {
   try {
     const audio = new Audio("/drop.wav");
-    audio.volume = 0.5;
+    audio.volume = 1.0;
     audio.play().catch(() => {});
   } catch {}
 }

@@ -16,7 +16,7 @@ export const DEFAULT_SETTINGS: Settings = {
   categoryBudgets: [
     { category: "Besteiras", limit: 300 },
     { category: "Alimentacao", limit: 500 },
-    { category: "Transporte", limit: 150 },
+    { category: "Transporte", limit: 400 },
     { category: "Lazer", limit: 400 },
   ],
 };

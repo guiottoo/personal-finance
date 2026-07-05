@@ -10,13 +10,19 @@ export function SettingsForm({ settings, onSave }: { settings: Settings; onSave:
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    const categoryBudgets = settings.categoryBudgets.map((b) => ({
+      category: b.category,
+      limit: parseFloat(fd.get(`budget_${b.category}`) as string) || b.limit,
+    }));
     onSave({
       ...settings,
+      monthlyIncome: parseFloat(fd.get("monthlyIncome") as string) || settings.monthlyIncome,
       goalAmount: parseFloat(fd.get("goalAmount") as string) || settings.goalAmount,
       funMoneyLimit: parseFloat(fd.get("funMoneyLimit") as string) || settings.funMoneyLimit,
       phoneInstallmentActive: fd.get("phoneActive") === "on",
       phoneInstallmentAmount: parseFloat(fd.get("phoneAmount") as string) || settings.phoneInstallmentAmount,
       phoneInstallmentEndsAt: (fd.get("phoneEnds") as string) || settings.phoneInstallmentEndsAt,
+      categoryBudgets,
     });
   };
 
@@ -24,7 +30,8 @@ export function SettingsForm({ settings, onSave }: { settings: Settings; onSave:
     <Card>
       <CardTitle>Geral</CardTitle>
       <form onSubmit={handleSubmit} className="mt-4 space-y-5">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <Input label="Receita mensal (R$)" id="monthlyIncome" name="monthlyIncome" type="number" step="0.01" defaultValue={settings.monthlyIncome} />
           <Input label="Meta (R$)" id="goalAmount" name="goalAmount" type="number" step="0.01" defaultValue={settings.goalAmount} />
           <Input label="Teto besteiras (R$)" id="funMoneyLimit" name="funMoneyLimit" type="number" step="0.01" defaultValue={settings.funMoneyLimit} />
         </div>
@@ -37,6 +44,13 @@ export function SettingsForm({ settings, onSave }: { settings: Settings; onSave:
           </div>
           <Input label="Valor" id="phoneAmount" name="phoneAmount" type="number" step="0.01" defaultValue={settings.phoneInstallmentAmount} />
           <Input label="Ate" id="phoneEnds" name="phoneEnds" type="month" defaultValue={settings.phoneInstallmentEndsAt} />
+        </div>
+
+        <p className="text-[13px] font-semibold text-[#8E8E93] uppercase tracking-wider">Orçamentos por categoria</p>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {settings.categoryBudgets.map((b) => (
+            <Input key={b.category} label={`${b.category} (R$)`} id={`budget_${b.category}`} name={`budget_${b.category}`} type="number" step="0.01" defaultValue={b.limit} />
+          ))}
         </div>
 
         {settings.oneTimeExpenses.length > 0 && (
