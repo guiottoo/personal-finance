@@ -21,18 +21,6 @@ function inferAccount(category: string, type: string): string {
   return "c6-bank";
 }
 
-function loadSavedBudgets(): { category: string; limit: number }[] | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const saved = localStorage.getItem("category-budgets");
-    return saved ? JSON.parse(saved) : null;
-  } catch { return null; }
-}
-
-function saveBudgets(budgets: { category: string; limit: number }[]) {
-  localStorage.setItem("category-budgets", JSON.stringify(budgets));
-}
-
 export function useFinancialData() {
   const [settings, setSettingsRaw] = useState<Settings>(DEFAULT_SETTINGS);
   const [transactions, setTransactions] = useState<Transaction[]>(MOCK_TRANSACTIONS);
@@ -40,15 +28,20 @@ export function useFinancialData() {
 
   const setSettings = useCallback((s: Settings) => {
     setSettingsRaw(s);
-    saveBudgets(s.categoryBudgets);
+    if (isSupabaseConfigured && supabase) {
+      supabase.from("user_settings").update({
+        monthly_income: s.monthlyIncome,
+        goal_amount: s.goalAmount,
+        fun_money_limit: s.funMoneyLimit,
+        phone_installment_active: s.phoneInstallmentActive,
+        phone_installment_amount: s.phoneInstallmentAmount,
+        phone_installment_ends_at: s.phoneInstallmentEndsAt,
+        category_budgets: s.categoryBudgets,
+      }).eq("id", "d884fb3e-c235-4d4c-9647-b4bf99ac202e").then(() => {});
+    }
   }, []);
 
   useEffect(() => {
-    const savedBudgets = loadSavedBudgets();
-    if (savedBudgets) {
-      setSettingsRaw((prev) => ({ ...prev, categoryBudgets: savedBudgets }));
-    }
-
     if (!isSupabaseConfigured || !supabase) return;
 
     async function loadData() {
@@ -80,7 +73,7 @@ export function useFinancialData() {
           .single();
 
         if (settingsData) {
-          const saved = loadSavedBudgets();
+          const budgets = settingsData.category_budgets;
           setSettingsRaw({
             monthlyIncome: Number(settingsData.monthly_income),
             incomeInstallments: DEFAULT_SETTINGS.incomeInstallments,
@@ -90,7 +83,7 @@ export function useFinancialData() {
             phoneInstallmentAmount: Number(settingsData.phone_installment_amount),
             phoneInstallmentEndsAt: settingsData.phone_installment_ends_at,
             oneTimeExpenses: settingsData.one_time_expenses || [],
-            categoryBudgets: saved || DEFAULT_SETTINGS.categoryBudgets,
+            categoryBudgets: budgets && budgets.length > 0 ? budgets : DEFAULT_SETTINGS.categoryBudgets,
           });
         }
       } catch (err) {
