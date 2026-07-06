@@ -12,7 +12,7 @@ export default function DashboardPage() {
     settings, currentExpenses, currentContribution, currentSurplus,
     goalAmount, currentAccumulated, goalProgress, projection,
     categoryBudgets, selectedMonth, setSelectedMonth, availableMonths,
-    actualIncome,
+    actualIncome, actualExpenses,
   } = useFinancialData();
 
   return (
@@ -27,7 +27,7 @@ export default function DashboardPage() {
           income: actualIncome > 0 ? actualIncome : settings.monthlyIncome,
           fixedExpenses: currentExpenses.fixed + currentExpenses.phone,
           contribution: currentContribution,
-          freeBalance: (actualIncome > 0 ? actualIncome : settings.monthlyIncome) - currentExpenses.total - currentContribution,
+          freeBalance: (actualIncome > 0 ? actualIncome : settings.monthlyIncome) - actualExpenses - currentContribution,
           goalProgress, goalAmount,
           accumulated: currentAccumulated,
         }}
