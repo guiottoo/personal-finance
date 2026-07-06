@@ -160,8 +160,8 @@ export function useFinancialData() {
       },
       {
         ...DEFAULT_ACCOUNTS[1],
-        balance: -interExpenses, // negativo ate abastecer dia 10
-        description: `Besteiras gastas: R$ ${interExpenses.toFixed(0)}. Aporte dia 10.`,
+        balance: 0,
+        description: "Não utilizado este mês",
       },
       {
         ...DEFAULT_ACCOUNTS[2],
