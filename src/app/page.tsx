@@ -20,6 +20,9 @@ export default function DashboardPage() {
     .filter((t) => t.type === "expense" && !budgetCats.has(t.category))
     .reduce((s, t) => s + t.amount, 0);
 
+  // Para cada categoria: desconta o maior entre limite e gasto real
+  const budgetImpact = categoryBudgets.reduce((s, b) => s + Math.max(b.limit, b.spent), 0);
+
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
@@ -32,9 +35,9 @@ export default function DashboardPage() {
           income: actualIncome > 0 ? actualIncome : settings.monthlyIncome,
           fixedExpenses: currentExpenses.fixed + currentExpenses.phone,
           contribution: currentContribution,
-          budgetLimits: settings.categoryBudgets.reduce((s, b) => s + b.limit, 0),
+          budgetLimits: budgetImpact,
           unbudgetedExpenses,
-          freeBalance: (actualIncome > 0 ? actualIncome : settings.monthlyIncome) - (currentExpenses.fixed + currentExpenses.phone) - currentContribution - settings.categoryBudgets.reduce((s, b) => s + b.limit, 0) - unbudgetedExpenses,
+          freeBalance: (actualIncome > 0 ? actualIncome : settings.monthlyIncome) - (currentExpenses.fixed + currentExpenses.phone) - currentContribution - budgetImpact - unbudgetedExpenses,
           goalProgress, goalAmount,
           accumulated: currentAccumulated,
         }}

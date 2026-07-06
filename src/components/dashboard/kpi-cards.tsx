@@ -55,7 +55,7 @@ export function KPICards({ data }: { data: KPIData }) {
             <span className="text-[#007AFF]">-{formatCurrency(data.contribution)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-[#8E8E93]">Orçamentos (limites)</span>
+            <span className="text-[#8E8E93]">Orçamentos (limite ou gasto real)</span>
             <span className="text-[#FF9500]">-{formatCurrency(data.budgetLimits)}</span>
           </div>
           {data.unbudgetedExpenses > 0 && (
