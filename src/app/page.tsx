@@ -32,6 +32,8 @@ export default function DashboardPage() {
           income: actualIncome > 0 ? actualIncome : settings.monthlyIncome,
           fixedExpenses: currentExpenses.fixed + currentExpenses.phone,
           contribution: currentContribution,
+          budgetLimits: settings.categoryBudgets.reduce((s, b) => s + b.limit, 0),
+          unbudgetedExpenses,
           freeBalance: (actualIncome > 0 ? actualIncome : settings.monthlyIncome) - (currentExpenses.fixed + currentExpenses.phone) - currentContribution - settings.categoryBudgets.reduce((s, b) => s + b.limit, 0) - unbudgetedExpenses,
           goalProgress, goalAmount,
           accumulated: currentAccumulated,
