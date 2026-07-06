@@ -12,8 +12,13 @@ export default function DashboardPage() {
     settings, currentExpenses, currentContribution, currentSurplus,
     goalAmount, currentAccumulated, goalProgress, projection,
     categoryBudgets, selectedMonth, setSelectedMonth, availableMonths,
-    actualIncome, actualExpenses,
+    actualIncome, actualExpenses, monthTransactions,
   } = useFinancialData();
+
+  const budgetCats = new Set(settings.categoryBudgets.map((b) => b.category));
+  const unbudgetedExpenses = monthTransactions
+    .filter((t) => t.type === "expense" && !budgetCats.has(t.category))
+    .reduce((s, t) => s + t.amount, 0);
 
   return (
     <div className="space-y-5">
@@ -27,7 +32,7 @@ export default function DashboardPage() {
           income: actualIncome > 0 ? actualIncome : settings.monthlyIncome,
           fixedExpenses: currentExpenses.fixed + currentExpenses.phone,
           contribution: currentContribution,
-          freeBalance: (actualIncome > 0 ? actualIncome : settings.monthlyIncome) - (currentExpenses.fixed + currentExpenses.phone) - currentContribution - settings.categoryBudgets.reduce((s, b) => s + b.limit, 0),
+          freeBalance: (actualIncome > 0 ? actualIncome : settings.monthlyIncome) - (currentExpenses.fixed + currentExpenses.phone) - currentContribution - settings.categoryBudgets.reduce((s, b) => s + b.limit, 0) - unbudgetedExpenses,
           goalProgress, goalAmount,
           accumulated: currentAccumulated,
         }}
