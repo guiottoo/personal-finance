@@ -218,6 +218,48 @@ export default function OrcamentosPage() {
           }}
         />
       ))}
+
+      {(() => {
+        const budgetCats = new Set(settings.categoryBudgets.map((b) => b.category));
+        const unbudgeted: Record<string, Transaction[]> = {};
+        monthTransactions.filter((t) => t.type === "expense" && !budgetCats.has(t.category)).forEach((t) => {
+          if (!unbudgeted[t.category]) unbudgeted[t.category] = [];
+          unbudgeted[t.category].push(t);
+        });
+        const cats = Object.entries(unbudgeted);
+        if (cats.length === 0) return null;
+        return (
+          <>
+            {cats.map(([cat, txs]) => {
+              const total = txs.reduce((s, t) => s + t.amount, 0);
+              return (
+                <Card key={cat} variant="grouped">
+                  <div className="p-5 sm:p-6">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <p className="text-[17px] font-semibold text-[#000] dark:text-white">{categoryLabel(cat)}</p>
+                        <span className="rounded-full bg-[#8E8E93]/10 px-2 py-0.5 text-[11px] text-[#8E8E93]">sem limite</span>
+                      </div>
+                      <p className="text-[15px] font-semibold text-[#000] dark:text-white">{formatCurrency(total)}</p>
+                    </div>
+                  </div>
+                  <div className="divide-y divide-[rgba(60,60,67,0.08)] border-t border-[rgba(60,60,67,0.08)] dark:divide-[rgba(84,84,88,0.18)] dark:border-[rgba(84,84,88,0.18)]">
+                    {txs.map((t) => (
+                      <div key={t.id} className="flex items-center justify-between px-5 py-2.5 sm:px-6">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] text-[#C7C7CC] w-10">{t.date.substring(8)}/{t.date.substring(5, 7)}</span>
+                          <span className="text-[15px] text-[#000] dark:text-white">{t.description}</span>
+                        </div>
+                        <span className="text-[15px] font-semibold text-[#000] dark:text-white">{formatCurrency(t.amount)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              );
+            })}
+          </>
+        );
+      })()}
     </div>
   );
 }

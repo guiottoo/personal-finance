@@ -18,7 +18,8 @@ export function TransactionForm({ onAdd, budgetCategories }: { onAdd: (t: Omit<T
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [notes, setNotes] = useState("");
 
-  const categories = type === "income" ? INCOME_CATEGORIES : type === "contribution" ? ["Investimento"] : (budgetCategories || []);
+  const extraCategories = ["Dividas", "Emprestimos"];
+  const categories = type === "income" ? INCOME_CATEGORIES : type === "contribution" ? ["Investimento"] : [...(budgetCategories || []), ...extraCategories];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
